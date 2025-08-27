@@ -97,7 +97,7 @@ Nevertheless, the performance of each algorithm is highly influenced by the char
 
 ##  Summary Dataset
 
-The dataset consists of **1 million records across 10 features**. After removing duplicates and missing values, the dataset is clean and ready for preprocessing. Correlation analysis confirmed strong relationships among core physical activity features (steps, distance, active minutes, calories), while sleep, mood, and weather provide complementary information. This makes the dataset suitable for classification tasks using ANN architectures (Backpropagation, LVQ, and ELM).
+The dataset consists of **1 million records across 12 features**. After removing duplicates and missing values, the dataset is clean and ready for preprocessing. Correlation analysis confirmed strong relationships among core physical activity features (steps, distance, active minutes, calories), while sleep, mood, and weather provide complementary information. This makes the dataset suitable for classification tasks using ANN architectures (Backpropagation, LVQ, and ELM).
 
 ---
 
