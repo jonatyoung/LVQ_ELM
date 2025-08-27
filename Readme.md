@@ -99,6 +99,152 @@ Nevertheless, the performance of each algorithm is highly influenced by the char
 
 The dataset consists of **1 million records across 10 features**. After removing duplicates and missing values, the dataset is clean and ready for preprocessing. Correlation analysis confirmed strong relationships among core physical activity features (steps, distance, active minutes, calories), while sleep, mood, and weather provide complementary information. This makes the dataset suitable for classification tasks using ANN architectures (Backpropagation, LVQ, and ELM).
 
+---
+
+## Data Preparation
+
+Before modeling, the dataset underwent the following preprocessing steps:
+
+1. **Data Cleaning**
+
+   * Dropped duplicates and rows with missing values (`workout_type` had \~14% missing values).
+   * Ensured each record (`user_id`, `date`) was unique.
+
+2. **Feature Encoding**
+
+   * Categorical variables (`workout_type`, `weather_conditions`, `location`, `mood`) were transformed using **One-Hot Encoding** for input features and **Label Encoding** for the target (`mood`).
+
+3. **Normalization**
+
+   * Numerical features (`steps`, `calories_burned`, `distance_km`, `active_minutes`, `sleep_hours`, `heart_rate_avg`) were standardized using **StandardScaler** to improve convergence in neural network training.
+
+4. **Train-Test Split**
+
+   * Data was split into **80% training** and **20% testing** to ensure robust evaluation.
+
+---
+
+## Modeling
+
+Three Artificial Neural Network (ANN) algorithms were implemented and compared:
+
+### **Backpropagation Neural Network (BPNN)**
+
+* **Architecture**: 2 hidden layers (20 and 10 neurons), sigmoid activation, trained with gradient descent.
+* **Output**: Single-node sigmoid for binary classification (extended to multiclass).
+* **Training**: 1000 epochs, learning rate = 0.01.
+
+### **Learning Vector Quantization (LVQ)**
+
+* **Mechanism**: Prototype-based classification. Each class represented by prototypes updated iteratively.
+* **Setup**: 1 prototype per class, learning rate = 0.1, max iteration = 10.
+* **Distance Metric**: Euclidean distance.
+
+### **Extreme Learning Machine (ELM)**
+
+* **Architecture**: Single hidden layer with 100 neurons, sigmoid activation.
+* **Training**: Input weights randomized, output weights computed analytically using Moore-Penrose pseudoinverse.
+* **Advantage**: Fast training compared to iterative methods.
+
+---
+
+## Evaluation
+
+### Accuracy Comparison
+
+| Model                  | Accuracy (%) |
+| ---------------------- | ------------ |
+| **ELM**                | 25.05%       |
+| **Backpropagation NN** | 25.07%       |
+| **LVQ**                | 24.90%       |
+
+→ All models achieved \~25% accuracy, close to **random guessing for 4 classes**.
+
+---
+
+### Confusion Matrices
+
+* **Backpropagation NN**: Predicted all samples as *Neutral*.
+* **LVQ**: Predicted all samples as *Tired*.
+* **ELM**: Distributed predictions between *Neutral* and *Stressed*, but still failed to classify *Happy* or *Tired* properly.
+
+---
+
+### Classification Report Highlights
+
+* **Backpropagation NN**
+
+  * Recall = 1.00 for *Neutral*, but 0.00 for other moods.
+  * Severe class imbalance in predictions.
+
+* **LVQ**
+
+  * Recall = 1.00 for *Tired*, but 0.00 for other moods.
+  * Overfitting to a single label.
+
+* **ELM**
+
+  * Slightly better distribution (*Neutral* and *Stressed* classified to some extent).
+  * Still very poor precision/recall for *Happy* and *Tired*.
+
+---
+
+## Answer to Problem Statement
+
+1. **How does each ANN algorithm perform?**
+
+   * All three ANN methods (Backpropagation, LVQ, ELM) struggled to classify mood labels correctly, with accuracy stuck around \~25% (random baseline).
+   * Backpropagation and LVQ overfit to a single class, while ELM at least attempted to separate two classes (*Neutral* and *Stressed*).
+
+2. **Which algorithm is the most optimal?**
+
+   * In this experiment, **ELM** is the most balanced, with slightly better precision and recall across multiple classes compared to LVQ and Backpropagation, even though overall accuracy is still low.
+   * Backpropagation and LVQ completely collapsed into predicting a single mood class.
+
+3. **Are performance differences significant?**
+
+   * Numerically, no. All accuracies are \~25%.
+   * Qualitatively, yes: ELM shows marginally better generalization than LVQ and Backpropagation, which were fully biased toward one label.
+
+---
+
+## Key Insights & Future Improvements
+
+* The poor performance suggests:
+
+  * **Target imbalance** (moods may not be equally distributed, even though test set looked balanced).
+  * **Model mismatch** (shallow ANNs might not capture the complexity of behavioral patterns).
+  * **Feature limitations** (steps, sleep, heart rate, etc., may not strongly determine mood without contextual factors).
+
+* Potential improvements:
+  - Try **deeper architectures** (e.g., multi-layer perceptrons with softmax output).
+  - Use **regularization** (dropout, weight decay) to prevent collapse into one-class predictions.
+  - Apply **class-weighting or oversampling** to handle label imbalance.
+  - Consider **ensemble models** or **tree-based methods** (Random Forest, XGBoost) for tabular data.
+---
+
+### Conclusion
+
+This study compared the performance of Backpropagation, Learning Vector Quantization (LVQ), and Extreme Learning Machine (ELM) in classifying physical activity data from fitness trackers, with results showing relatively low accuracy of around 25%. The findings suggest that the dataset’s complexity, parameter selection, and possible data noise limited the models’ effectiveness. Despite these limitations, the research highlights the challenges of applying neural networks to wearable device data and provides valuable insights for further exploration. Future work should focus on parameter optimization, improved dataset quality, and advanced models such as CNNs, RNNs, or alternative algorithms like SVM and Random Forest. While performance was below expectations, this study contributes an important foundation for advancing machine learning applications in health and sports technology, particularly in enhancing the analytical capabilities of wearable devices.
+
+---
+
+
+
+## References
+
+Pratama, A. (2019). *Jaringan syaraf tiruan algoritma Backpropagation*. Retrieved from [https://media.neliti.com/media/publications/279914-jaringan-syaraf-tiruan-algoritma-backpro-f0165b57.pdf](https://media.neliti.com/media/publications/279914-jaringan-syaraf-tiruan-algoritma-backpro-f0165b57.pdf)
+
+Suryana, F. (2021). *Analisis performa algoritma Backpropagation jaringan syaraf tiruan*. BINUS University. Retrieved from [https://binus.ac.id/bandung/2021/04/analisis-performa-algoritma-backpropagation-jaringan-syaraf-tiruan/](https://binus.ac.id/bandung/2021/04/analisis-performa-algoritma-backpropagation-jaringan-syaraf-tiruan/)
+
+Budianto, I. (2020). Penerapan algoritma Backpropagation pada sistem klasifikasi data. *Jurnal Teknologi Informasi dan Ilmu Komputer, 9*(4), 167–175. Retrieved from [https://jtiik.ub.ac.id/index.php/jtiik/article/view/4806/pdf](https://jtiik.ub.ac.id/index.php/jtiik/article/view/4806/pdf)
+
+Anggoro, E. (2019). *Extreme Learning Machine: Penerapan dan aplikasi*. Retrieved from [https://repository.penerbiteureka.com/media/publications/559194-extreme-learning-machine-penerapan-dan-a-57677ed4.pdf](https://repository.penerbiteureka.com/media/publications/559194-extreme-learning-machine-penerapan-dan-a-57677ed4.pdf)
+
+Ashar, N. M. (2020). *Penerapan Extreme Learning Machine pada klasifikasi data pengguna* (Undergraduate thesis, Universitas Brawijaya). Retrieved from [https://repository.ub.ac.id/id/eprint/13394/1/Nirzha%20Maulidya%20Ashar.pdf](https://repository.ub.ac.id/id/eprint/13394/1/Nirzha%20Maulidya%20Ashar.pdf)
+
+Santoso, D. P. (2019). *Penerapan Extreme Learning Machine pada model prediksi kinerja sistem*. Universitas Airlangga. Retrieved from [https://repository.unair.ac.id/97607/3/3.%20BAB%20I%20PENDAHULUAN.pdf](https://repository.unair.ac.id/97607/3/3.%20BAB%20I%20PENDAHULUAN.pdf)
+
 
 ---
 
